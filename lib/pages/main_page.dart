@@ -157,9 +157,9 @@ class NothingFound extends StatelessWidget {
         subtitle: 'Search for something else',
         buttonText: 'Search',
         assetImage: SuperHeroesImages.hulk,
-        imageHeight: 119,
-        imageWidth: 108,
-        imageTopPadding: 9);
+        imageHeight: 112,
+        imageWidth: 84,
+        imageTopPadding: 16);
   }
 }
 
@@ -173,9 +173,9 @@ class LoadingError extends StatelessWidget {
         subtitle: 'Please, try again',
         buttonText: 'Retry',
         assetImage: SuperHeroesImages.superMan,
-        imageHeight: 119,
-        imageWidth: 108,
-        imageTopPadding: 9);
+        imageHeight: 106,
+        imageWidth: 126,
+        imageTopPadding: 22);
   }
 }
 
@@ -188,7 +188,7 @@ class Favorites extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(
-          height: 114,
+          height: 90,
         ),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
@@ -253,7 +253,7 @@ class SearchResult extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(
-          height: 114,
+          height: 90,
         ),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),

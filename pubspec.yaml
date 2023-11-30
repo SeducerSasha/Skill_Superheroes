@@ -28,7 +28,5 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/ironman.png
-    - assets/images/hulk.png
-    - assets/images/superman.png
+    - assets/images/
 
