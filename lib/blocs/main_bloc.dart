@@ -8,7 +8,7 @@ import 'package:rxdart/rxdart.dart';
 class MainBloc {
   static const minSymbols = 3;
   final BehaviorSubject<MainPageState> stateSubject = BehaviorSubject();
-  final favoriteSurerheroesSubject =
+  final favoriteSuperheroesSubject =
       BehaviorSubject<List<SuperheroInfo>>.seeded(SuperheroInfo.mocked);
   final searchedSurerheroesSubject = BehaviorSubject<List<SuperheroInfo>>();
   final currentTextSubject = BehaviorSubject<String>.seeded('');
@@ -19,14 +19,26 @@ class MainBloc {
   MainBloc() {
     stateSubject.add(MainPageState.noFavorites);
 
-    textSubscription = currentTextSubject.listen((value) {
+    textSubscription = Rx.combineLatest2(
+        currentTextSubject
+            .distinct()
+            .debounceTime(const Duration(milliseconds: 500)),
+        favoriteSuperheroesSubject,
+        (searhedText, favorites) => MainPageInfo(
+            searchText: searhedText,
+            haveFavorites: favorites.isNotEmpty)).listen((value) {
+      print('CHANGED $value');
       searchSubscription?.cancel();
-      if (value.isEmpty) {
-        stateSubject.add(MainPageState.favorites);
-      } else if (value.length < minSymbols) {
+      if (value.searchText.isEmpty) {
+        if (value.haveFavorites) {
+          stateSubject.add(MainPageState.favorites);
+        } else {
+          stateSubject.add(MainPageState.noFavorites);
+        }
+      } else if (value.searchText.length < minSymbols) {
         stateSubject.add(MainPageState.minSymbols);
       } else {
-        searchSuperheroes(value);
+        searchSuperheroes(value.searchText);
       }
     });
   }
@@ -47,7 +59,7 @@ class MainBloc {
   }
 
   Stream<List<SuperheroInfo>> observeFavoriteSuperheroes() {
-    return favoriteSurerheroesSubject;
+    return favoriteSuperheroesSubject;
   }
 
   Stream<List<SuperheroInfo>> observeSearchedSuperheroes() {
@@ -78,7 +90,7 @@ class MainBloc {
 
   void dispose() {
     stateSubject.close();
-    favoriteSurerheroesSubject.close();
+    favoriteSuperheroesSubject.close();
     searchedSurerheroesSubject.close();
     currentTextSubject.close();
     textSubscription?.cancel();
@@ -137,4 +149,27 @@ class SuperheroInfo {
         imageURL:
             'https://www.superherodb.com/pictures2/portraits/10/100/22.jpg'),
   ];
+}
+
+class MainPageInfo {
+  final String searchText;
+  final bool haveFavorites;
+
+  const MainPageInfo({required this.searchText, required this.haveFavorites});
+
+  @override
+  String toString() =>
+      'MainPageInfo(searchText: $searchText, haveFavorites: $haveFavorites)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is MainPageInfo &&
+        other.searchText == searchText &&
+        other.haveFavorites == haveFavorites;
+  }
+
+  @override
+  int get hashCode => searchText.hashCode ^ haveFavorites.hashCode;
 }

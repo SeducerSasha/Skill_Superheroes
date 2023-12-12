@@ -5,7 +5,6 @@ import 'package:superheroes/blocs/main_bloc.dart';
 import 'package:superheroes/pages/superhero_page.dart';
 import 'package:superheroes/resources/superheroes_color.dart';
 import 'package:superheroes/resources/superheroes_images.dart';
-import 'package:superheroes/widgets/action_button.dart';
 import 'package:superheroes/widgets/info_with_button.dart';
 import 'package:superheroes/widgets/superhero_card.dart';
 
@@ -15,22 +14,6 @@ class MainPage extends StatefulWidget {
   @override
   State<MainPage> createState() => _MainPageState();
 }
-
-// class MainBlocHolder extends InheritedWidget {
-//   final MainBloc bloc;
-
-//   MainBlocHolder({super.key, required final Widget child, required this.bloc})
-//       : super(child: child);
-
-//   @override
-//   bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
-
-//   static MainBlocHolder of(final BuildContext context) {
-//     final InheritedElement element =
-//         context.getElementForInheritedWidgetOfExactType<MainBlocHolder>()!;
-//     return element.widget as MainBlocHolder;
-//   }
-// }
 
 class _MainPageState extends State<MainPage> {
   final MainBloc bloc = MainBloc();
@@ -46,16 +29,6 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
     );
-    // )
-    // return MainBlocHolder(
-    //   bloc: bloc,
-    //   child: const Scaffold(
-    //     backgroundColor: SuperHeroesColor.background,
-    //     body: SafeArea(
-    //       child: MainPageContent(),
-    //     ),
-    //   ),
-    // );
   }
 
   @override
@@ -75,18 +48,6 @@ class MainPageContent extends StatelessWidget {
     return Stack(
       children: [
         const MainPageStateWidget(),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 30),
-            child: ActionButton(
-              text: 'Next state',
-              onTap: () {
-                bloc.nextState();
-              },
-            ),
-          ),
-        ),
         const Padding(
           padding: EdgeInsets.only(top: 12, left: 16, right: 16),
           child: SearchWidget(),
@@ -246,71 +207,6 @@ class LoadingError extends StatelessWidget {
   }
 }
 
-class Favorites extends StatelessWidget {
-  const Favorites({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(
-          height: 90,
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Your favorites',
-            style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w800,
-                color: SuperHeroesColor.whiteText),
-          ),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: SuperheroCard(
-            name: 'Batman',
-            realName: 'Bruce Wayne',
-            imageUrl:
-                'https://www.superherodb.com/pictures2/portraits/10/100/639.jpg',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const SuperheroPage(
-                    name: 'Batman',
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        const SizedBox(
-          height: 8,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: SuperheroCard(
-            name: 'Ironman',
-            realName: 'Tony Stark',
-            imageUrl:
-                'https://www.superherodb.com/pictures2/portraits/10/100/85.jpg',
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const SuperheroPage(
-                        name: 'Ironman',
-                      )));
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class SuperHeroesList extends StatelessWidget {
   final String title;
   final Stream<List<SuperheroInfo>> stream;
@@ -372,67 +268,6 @@ class SuperHeroesList extends StatelessWidget {
   }
 }
 
-class SearchResult extends StatelessWidget {
-  const SearchResult({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(
-          height: 90,
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Search results',
-            style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w800,
-                color: SuperHeroesColor.whiteText),
-          ),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SuperheroCard(
-              name: 'Batman',
-              realName: 'Bruce Wayne',
-              imageUrl:
-                  'https://www.superherodb.com/pictures2/portraits/10/100/639.jpg',
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const SuperheroPage(
-                          name: 'Batman',
-                        )));
-              },
-            )),
-        const SizedBox(
-          height: 8,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: SuperheroCard(
-            name: 'Venom',
-            realName: 'Eddie Brock',
-            imageUrl:
-                'https://www.superherodb.com/pictures2/portraits/10/100/22.jpg',
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const SuperheroPage(
-                        name: 'Venom',
-                      )));
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class MainPageStateWidget extends StatelessWidget {
   const MainPageStateWidget({super.key});
 
@@ -463,12 +298,12 @@ class MainPageStateWidget extends StatelessWidget {
           case MainPageState.searchResults:
             return SuperHeroesList(
               title: 'Search results',
-              stream: bloc.observeFavoriteSuperheroes(),
+              stream: bloc.observeSearchedSuperheroes(),
             );
           case MainPageState.favorites:
             return SuperHeroesList(
                 title: 'Your favorites',
-                stream: bloc.observeSearchedSuperheroes());
+                stream: bloc.observeFavoriteSuperheroes());
           default:
             return Center(
               child: Text(

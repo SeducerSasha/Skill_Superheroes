@@ -21,8 +21,12 @@ class SuperheroCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+          color: SuperHeroesColor.backgroundCard,
+        ),
+        clipBehavior: Clip.antiAlias,
         height: 70,
-        color: SuperHeroesColor.backgroundCard,
         child: Row(
           children: [
             Image.network(imageUrl, height: 70, width: 70, fit: BoxFit.cover),
