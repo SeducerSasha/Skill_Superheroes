@@ -5,6 +5,7 @@ import 'package:superheroes/blocs/main_bloc.dart';
 import 'package:superheroes/pages/superhero_page.dart';
 import 'package:superheroes/resources/superheroes_color.dart';
 import 'package:superheroes/resources/superheroes_images.dart';
+import 'package:superheroes/widgets/action_button.dart';
 import 'package:superheroes/widgets/info_with_button.dart';
 import 'package:superheroes/widgets/superhero_card.dart';
 
@@ -44,11 +45,11 @@ class MainPageContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //final MainBloc bloc = MainBlocHolder.of(context).bloc;
-    final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
-    return Stack(
+    //final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
+    return const Stack(
       children: [
-        const MainPageStateWidget(),
-        const Padding(
+        MainPageStateWidget(),
+        Padding(
           padding: EdgeInsets.only(top: 12, left: 16, right: 16),
           child: SearchWidget(),
         )
@@ -66,6 +67,7 @@ class SearchWidget extends StatefulWidget {
 
 class _SearchWidgetState extends State<SearchWidget> {
   final TextEditingController textSearchingController = TextEditingController();
+  bool haveSearchedText = false;
 
   @override
   void initState() {
@@ -74,6 +76,12 @@ class _SearchWidgetState extends State<SearchWidget> {
       final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
       textSearchingController.addListener(() {
         bloc.updateText(textSearchingController.text);
+        final haveText = textSearchingController.text.isNotEmpty;
+        if (haveSearchedText != haveText) {
+          setState(() {
+            haveSearchedText = haveText;
+          });
+        }
       });
     });
   }
@@ -83,16 +91,29 @@ class _SearchWidgetState extends State<SearchWidget> {
     //final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
     return TextField(
       controller: textSearchingController,
+      cursorColor: Colors.white,
+      textInputAction: TextInputAction.search,
+      textCapitalization: TextCapitalization.words,
       //onChanged: (text) => bloc.updateText(text),
       decoration: InputDecoration(
           filled: true,
           fillColor: SuperHeroesColor.background75,
           isDense: true,
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Colors.white, width: 2),
+          ),
           enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: Colors.white24,
-              )),
+            borderRadius: BorderRadius.circular(8),
+            borderSide: haveSearchedText
+                ? const BorderSide(
+                    color: Colors.white,
+                    width: 2,
+                  )
+                : const BorderSide(
+                    color: Colors.white54,
+                  ),
+          ),
           prefixIcon: const Icon(
             size: 24,
             Icons.search,
@@ -223,7 +244,8 @@ class SuperHeroesList extends StatelessWidget {
           }
           final List<SuperheroInfo> superheroes = snapshot.data!;
           return ListView.separated(
-            //physics: BouncingScrollPhysics(),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            //physics: ClampingScrollPhysics(),
             separatorBuilder: (BuildContext context, int index) {
               return const SizedBox(
                 height: 8,
@@ -249,9 +271,7 @@ class SuperHeroesList extends StatelessWidget {
               return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: SuperheroCard(
-                    name: item.name,
-                    realName: item.realName,
-                    imageUrl: item.imageURL,
+                    superheroInfo: item,
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -288,7 +308,21 @@ class MainPageStateWidget extends StatelessWidget {
           case MainPageState.loading:
             return const LoadingIndicator();
           case MainPageState.noFavorites:
-            return const NoFavorites();
+            return Stack(
+              children: [
+                const NoFavorites(),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: ActionButton(
+                      text: 'Remove',
+                      onTap: bloc.removeFavorite,
+                    ),
+                  ),
+                ),
+              ],
+            );
           case MainPageState.minSymbols:
             return const MinSymbols();
           case MainPageState.nothingFound:
@@ -301,9 +335,24 @@ class MainPageStateWidget extends StatelessWidget {
               stream: bloc.observeSearchedSuperheroes(),
             );
           case MainPageState.favorites:
-            return SuperHeroesList(
-                title: 'Your favorites',
-                stream: bloc.observeFavoriteSuperheroes());
+            return Stack(
+              children: [
+                SuperHeroesList(
+                  title: 'Your favorites',
+                  stream: bloc.observeFavoriteSuperheroes(),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: ActionButton(
+                      text: 'Remove',
+                      onTap: bloc.removeFavorite,
+                    ),
+                  ),
+                ),
+              ],
+            );
           default:
             return Center(
               child: Text(
