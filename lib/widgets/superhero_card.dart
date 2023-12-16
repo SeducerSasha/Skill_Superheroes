@@ -26,8 +26,19 @@ class SuperheroCard extends StatelessWidget {
         height: 70,
         child: Row(
           children: [
-            Image.network(superheroInfo.imageURL,
-                height: 70, width: 70, fit: BoxFit.cover),
+            Image.network(
+              superheroInfo.imageURL,
+              height: 70,
+              width: 70,
+              fit: BoxFit.cover,
+              errorBuilder: (BuildContext context, Object exception,
+                  StackTrace? stackTrace) {
+                return const SizedBox(
+                  width: 70,
+                  height: 70,
+                );
+              },
+            ),
             const SizedBox(
               width: 12,
             ),

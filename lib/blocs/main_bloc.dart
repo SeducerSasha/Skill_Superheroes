@@ -2,8 +2,12 @@
 //import 'dart:async';
 
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 import 'package:rxdart/rxdart.dart';
+import 'package:superheroes/model/superhero.dart';
 
 class MainBloc {
   static const minSymbols = 3;
@@ -68,12 +72,31 @@ class MainBloc {
 
   Future<List<SuperheroInfo>> search(final String text) async {
     await Future.delayed(const Duration(seconds: 1));
-    final List<SuperheroInfo> moked = SuperheroInfo.mocked;
-    final List<SuperheroInfo> resultSearch = moked
-        .where((element) =>
-            element.name.toUpperCase().contains(text.toUpperCase()))
-        .toList();
-    return resultSearch; //SuperheroInfo.mocked;
+
+    final token = dotenv.env['SUPERHERO_TOKEN'];
+    final response = await http
+        .get(Uri.parse('https://superheroapi.com/api/$token/search/$text'));
+
+    final decoded = jsonDecode(response.body);
+    if (decoded['response'] == 'success') {
+      final List<dynamic> results = decoded['results'];
+      final List<Superhero> superheroes =
+          results.map((element) => Superhero.fromJson(element)).toList();
+      final List<SuperheroInfo> found = superheroes.map((element) {
+        return SuperheroInfo(
+            name: element.name,
+            realName: element.biography.fullname,
+            imageURL: element.image.url);
+      }).toList();
+      return found;
+    } else {
+      if (decoded['response'] == 'error') {
+        if (decoded['error'] == 'character with given name not found') {
+          return [];
+        }
+      }
+    }
+    throw Exception('Unknown error');
   }
 
   Stream<MainPageState> observeMainPageState() {

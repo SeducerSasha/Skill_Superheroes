@@ -16,12 +16,18 @@ dependencies:
   rxdart: ^0.27.7
   provider: ^6.1.1
   google_fonts: ^6.1.0
+  http: ^1.1.2
+  flutter_dotenv: ^5.1.0
+  json_annotation: ^4.8.1
+  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^2.0.0
+  json_serializable: ^6.7.1
+  build_runner: ^2.4.7
 
 flutter:
 
@@ -29,4 +35,5 @@ flutter:
 
   assets:
     - assets/images/
+    - .env
 
