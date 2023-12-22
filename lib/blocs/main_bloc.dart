@@ -20,7 +20,9 @@ class MainBloc {
   StreamSubscription? textSubscription;
   StreamSubscription? searchSubscription;
 
-  MainBloc() {
+  http.Client? client;
+
+  MainBloc({this.client}) {
     stateSubject.add(MainPageState.noFavorites);
 
     textSubscription = Rx.combineLatest2(
@@ -71,10 +73,8 @@ class MainBloc {
   }
 
   Future<List<SuperheroInfo>> search(final String text) async {
-    await Future.delayed(const Duration(seconds: 1));
-
     final token = dotenv.env['SUPERHERO_TOKEN'];
-    final response = await http
+    final response = await (client ??= http.Client())
         .get(Uri.parse('https://superheroapi.com/api/$token/search/$text'));
 
     final decoded = jsonDecode(response.body);
@@ -85,7 +85,7 @@ class MainBloc {
       final List<SuperheroInfo> found = superheroes.map((element) {
         return SuperheroInfo(
             name: element.name,
-            realName: element.biography.fullname,
+            realName: element.biography.fullName,
             imageURL: element.image.url);
       }).toList();
       return found;
@@ -133,6 +133,7 @@ class MainBloc {
     searchedSurerheroesSubject.close();
     currentTextSubject.close();
     textSubscription?.cancel();
+    client?.close();
   }
 }
 
