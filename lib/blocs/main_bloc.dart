@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:rxdart/rxdart.dart';
+import 'package:superheroes/exception/exception.dart';
 import 'package:superheroes/model/superhero.dart';
 
 class MainBloc {
@@ -77,26 +78,53 @@ class MainBloc {
     final response = await (client ??= http.Client())
         .get(Uri.parse('https://superheroapi.com/api/$token/search/$text'));
 
-    final decoded = jsonDecode(response.body);
-    if (decoded['response'] == 'success') {
-      final List<dynamic> results = decoded['results'];
-      final List<Superhero> superheroes =
-          results.map((element) => Superhero.fromJson(element)).toList();
-      final List<SuperheroInfo> found = superheroes.map((element) {
-        return SuperheroInfo(
-            name: element.name,
-            realName: element.biography.fullName,
-            imageURL: element.image.url);
-      }).toList();
-      return found;
-    } else {
+    if (response.statusCode >= 500 && response.statusCode <= 599) {
+      throw ApiException('Server error happened');
+    } else if (response.statusCode >= 400 && response.statusCode <= 499) {
+      throw ApiException('Client error happened');
+    } else if (response.statusCode == 200) {
+      final decoded = jsonDecode(response.body);
       if (decoded['response'] == 'error') {
         if (decoded['error'] == 'character with given name not found') {
           return [];
+        } else {
+          throw ApiException('Client error happened');
         }
+      } else {
+        final List<dynamic> results = decoded['results'];
+        final List<Superhero> superheroes =
+            results.map((element) => Superhero.fromJson(element)).toList();
+        final List<SuperheroInfo> found = superheroes.map((element) {
+          return SuperheroInfo(
+              name: element.name,
+              realName: element.biography.fullName,
+              imageURL: element.image.url);
+        }).toList();
+        return found;
       }
+    } else {
+      throw Exception('Unknown error');
     }
-    throw Exception('Unknown error');
+
+    // if (decoded['response'] == 'success') {
+    //   final List<dynamic> results = decoded['results'];
+    //   final List<Superhero> superheroes =
+    //       results.map((element) => Superhero.fromJson(element)).toList();
+    //   final List<SuperheroInfo> found = superheroes.map((element) {
+    //     return SuperheroInfo(
+    //         name: element.name,
+    //         realName: element.biography.fullName,
+    //         imageURL: element.image.url);
+    //   }).toList();
+    //   return found;
+    // } else {
+    //   if (decoded['response'] == 'error') {
+    //     if (decoded['error'] == 'character with given name not found') {
+    //       return [];
+    //     }
+    //   }
+    // }
+    //throw Exception('Unknown error');
   }
 
   Stream<MainPageState> observeMainPageState() {
