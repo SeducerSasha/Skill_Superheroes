@@ -31,7 +31,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Provider.value(
       value: bloc,
-      child: const Scaffold(
+      child: Scaffold(
         backgroundColor: SuperHeroesColor.background,
         body: SafeArea(
           child: MainPageContent(),
@@ -47,19 +47,39 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-class MainPageContent extends StatelessWidget {
+class MainPageContent extends StatefulWidget {
   const MainPageContent({super.key});
+
+  @override
+  State<MainPageContent> createState() => _MainPageContentState();
+}
+
+class _MainPageContentState extends State<MainPageContent> {
+  late FocusNode textFieldSearchFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    textFieldSearchFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    textFieldSearchFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     //final MainBloc bloc = MainBlocHolder.of(context).bloc;
     //final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
-    return const Stack(
+    return Stack(
       children: [
-        MainPageStateWidget(),
+        MainPageStateWidget(textFieldSearchFocusNode: textFieldSearchFocusNode),
         Padding(
-          padding: EdgeInsets.only(top: 12, left: 16, right: 16),
-          child: SearchWidget(),
+          padding: const EdgeInsets.only(top: 12, left: 16, right: 16),
+          child:
+              SearchWidget(textFieldSearchFocusNode: textFieldSearchFocusNode),
         )
       ],
     );
@@ -67,7 +87,8 @@ class MainPageContent extends StatelessWidget {
 }
 
 class SearchWidget extends StatefulWidget {
-  const SearchWidget({super.key});
+  final FocusNode textFieldSearchFocusNode;
+  const SearchWidget({super.key, required this.textFieldSearchFocusNode});
 
   @override
   State<SearchWidget> createState() => _SearchWidgetState();
@@ -98,6 +119,7 @@ class _SearchWidgetState extends State<SearchWidget> {
   Widget build(BuildContext context) {
     //final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
     return TextField(
+      focusNode: widget.textFieldSearchFocusNode,
       controller: textSearchingController,
       cursorColor: Colors.white,
       textInputAction: TextInputAction.search,
@@ -189,34 +211,41 @@ class MinSymbols extends StatelessWidget {
 }
 
 class NoFavorites extends StatelessWidget {
-  const NoFavorites({super.key});
+  final FocusNode textFieldSearchFocusNode;
+  const NoFavorites({super.key, required this.textFieldSearchFocusNode});
 
   @override
   Widget build(BuildContext context) {
-    return const InfoWithButton(
-        title: 'No favorites yet',
-        subtitle: 'Search and add',
-        buttonText: 'Search',
-        assetImage: SuperHeroesImages.ironMan,
-        imageHeight: 119,
-        imageWidth: 108,
-        imageTopPadding: 9);
+    return InfoWithButton(
+      title: 'No favorites yet',
+      subtitle: 'Search and add',
+      buttonText: 'Search',
+      assetImage: SuperHeroesImages.ironMan,
+      imageHeight: 119,
+      imageWidth: 108,
+      imageTopPadding: 9,
+      onTap: () => textFieldSearchFocusNode.requestFocus(),
+    );
   }
 }
 
 class NothingFound extends StatelessWidget {
-  const NothingFound({super.key});
+  final FocusNode textFieldSearchFocusNode;
+
+  const NothingFound({super.key, required this.textFieldSearchFocusNode});
 
   @override
   Widget build(BuildContext context) {
-    return const InfoWithButton(
-        title: 'Nothing found',
-        subtitle: 'Search for something else',
-        buttonText: 'Search',
-        assetImage: SuperHeroesImages.hulk,
-        imageHeight: 112,
-        imageWidth: 84,
-        imageTopPadding: 16);
+    return InfoWithButton(
+      title: 'Nothing found',
+      subtitle: 'Search for something else',
+      buttonText: 'Search',
+      assetImage: SuperHeroesImages.hulk,
+      imageHeight: 112,
+      imageWidth: 84,
+      imageTopPadding: 16,
+      onTap: () => textFieldSearchFocusNode.requestFocus(),
+    );
   }
 }
 
@@ -225,14 +254,17 @@ class LoadingError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const InfoWithButton(
-        title: 'Error happened',
-        subtitle: 'Please, try again',
-        buttonText: 'Retry',
-        assetImage: SuperHeroesImages.superMan,
-        imageHeight: 106,
-        imageWidth: 126,
-        imageTopPadding: 22);
+    final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
+    return InfoWithButton(
+      title: 'Error happened',
+      subtitle: 'Please, try again',
+      buttonText: 'Retry',
+      assetImage: SuperHeroesImages.superMan,
+      imageHeight: 106,
+      imageWidth: 126,
+      imageTopPadding: 22,
+      onTap: () => bloc.retry(),
+    );
   }
 }
 
@@ -297,7 +329,10 @@ class SuperHeroesList extends StatelessWidget {
 }
 
 class MainPageStateWidget extends StatelessWidget {
-  const MainPageStateWidget({super.key});
+  final FocusNode textFieldSearchFocusNode;
+
+  const MainPageStateWidget(
+      {super.key, required this.textFieldSearchFocusNode});
 
   @override
   Widget build(BuildContext context) {
@@ -318,7 +353,7 @@ class MainPageStateWidget extends StatelessWidget {
           case MainPageState.noFavorites:
             return Stack(
               children: [
-                const NoFavorites(),
+                NoFavorites(textFieldSearchFocusNode: textFieldSearchFocusNode),
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Padding(
@@ -334,7 +369,9 @@ class MainPageStateWidget extends StatelessWidget {
           case MainPageState.minSymbols:
             return const MinSymbols();
           case MainPageState.nothingFound:
-            return const NothingFound();
+            return NothingFound(
+              textFieldSearchFocusNode: textFieldSearchFocusNode,
+            );
           case MainPageState.loadingError:
             return const LoadingError();
           case MainPageState.searchResults:

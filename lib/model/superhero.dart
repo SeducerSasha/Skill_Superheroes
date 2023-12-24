@@ -11,8 +11,9 @@ class Superhero {
   final Biography biography;
   final ServerImage image;
   final Powerstats powerstats;
+  final String id;
 
-  Superhero(this.name, this.biography, this.image, this.powerstats);
+  Superhero(this.name, this.biography, this.image, this.powerstats, this.id);
 
   factory Superhero.fromJson(final Map<String, dynamic> json) =>
       _$SuperheroFromJson(json);

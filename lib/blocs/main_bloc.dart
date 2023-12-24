@@ -34,7 +34,6 @@ class MainBloc {
         (searhedText, favorites) => MainPageInfo(
             searchText: searhedText,
             haveFavorites: favorites.isNotEmpty)).listen((value) {
-      print('CHANGED $value');
       searchSubscription?.cancel();
       if (value.searchText.isEmpty) {
         if (value.haveFavorites) {
@@ -137,9 +136,16 @@ class MainBloc {
     if (currentListFavorites.isEmpty) {
       favoriteSuperheroesSubject.add(SuperheroInfo.mocked);
     } else {
-      favoriteSuperheroesSubject.add(
-          currentListFavorites.sublist(0, currentListFavorites.length - 1));
+      currentListFavorites.removeLast();
+      favoriteSuperheroesSubject.add(currentListFavorites);
+      // favoriteSuperheroesSubject.add(
+      //     currentListFavorites.sublist(0, currentListFavorites.length - 1));
     }
+  }
+
+  void retry() {
+    final currentSearchText = currentTextSubject.value;
+    searchSuperheroes(currentSearchText);
   }
 
   void nextState() {

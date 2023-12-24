@@ -38,13 +38,13 @@ class SuperheroCard extends StatelessWidget {
                 width: 70,
                 fit: BoxFit.cover,
                 progressIndicatorBuilder: (context, url, progress) {
-                  return const Center(
+                  return Center(
                     child: SizedBox(
                       width: 24,
                       height: 24,
                       child: CircularProgressIndicator(
-                        color: Colors.blueAccent,
-                        strokeWidth: 4,
+                        color: SuperHeroesColor.blue,
+                        value: progress.progress,
                       ),
                     ),
                   );
