@@ -6,8 +6,14 @@ part 'biography.g.dart';
 class Biography {
   final String fullName;
   final String alignment;
+  final List<String> aliases;
+  final String placeOfBirth;
 
-  Biography(this.fullName, this.alignment);
+  Biography(
+      {required this.fullName,
+      required this.alignment,
+      required this.aliases,
+      required this.placeOfBirth});
 
   factory Biography.fromJson(final Map<String, dynamic> json) =>
       _$BiographyFromJson(json);

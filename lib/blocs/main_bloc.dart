@@ -95,6 +95,7 @@ class MainBloc {
             results.map((element) => Superhero.fromJson(element)).toList();
         final List<SuperheroInfo> found = superheroes.map((element) {
           return SuperheroInfo(
+              id: element.id,
               name: element.name,
               realName: element.biography.fullName,
               imageURL: element.image.url);
@@ -182,42 +183,51 @@ enum MainPageState {
 }
 
 class SuperheroInfo {
+  final String id;
   final String name;
   final String realName;
   final String imageURL;
 
   SuperheroInfo(
-      {required this.name, required this.realName, required this.imageURL});
+      {required this.id,
+      required this.name,
+      required this.realName,
+      required this.imageURL});
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
     return other is SuperheroInfo &&
+        other.id == id &&
         other.name == name &&
         other.realName == realName &&
         other.imageURL == imageURL;
   }
 
   @override
-  int get hashCode => name.hashCode ^ realName.hashCode ^ imageURL.hashCode;
+  int get hashCode =>
+      id.hashCode ^ name.hashCode ^ realName.hashCode ^ imageURL.hashCode;
 
   @override
   String toString() =>
-      'SuperheroInfo(name: $name, realName: $realName, imageURL: $imageURL)';
+      'SuperheroInfo(id: $id, name: $name, realName: $realName, imageURL: $imageURL)';
 
   static List<SuperheroInfo> mocked = [
     SuperheroInfo(
+        id: '70',
         name: 'Batman',
         realName: 'Bruce Wayne',
         imageURL:
             'https://www.superherodb.com/pictures2/portraits/10/100/639.jpg'),
     SuperheroInfo(
+        id: '732',
         name: 'Ironman',
         realName: 'Tony Stark',
         imageURL:
             'https://www.superherodb.com/pictures2/portraits/10/100/85.jpg'),
     SuperheroInfo(
+        id: '687',
         name: 'Venom',
         realName: 'Eddie Brock',
         imageURL:

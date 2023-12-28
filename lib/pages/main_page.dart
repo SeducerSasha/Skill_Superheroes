@@ -31,7 +31,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Provider.value(
       value: bloc,
-      child: Scaffold(
+      child: const Scaffold(
         backgroundColor: SuperHeroesColor.background,
         body: SafeArea(
           child: MainPageContent(),
@@ -316,7 +316,7 @@ class SuperHeroesList extends StatelessWidget {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => SuperheroPage(
-                            name: item.name,
+                            id: item.name,
                           ),
                         ),
                       );

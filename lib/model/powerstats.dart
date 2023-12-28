@@ -11,8 +11,13 @@ class Powerstats {
   final String power;
   final String combat;
 
-  Powerstats(this.intelligence, this.strength, this.speed, this.durability,
-      this.power, this.combat);
+  Powerstats(
+      {required this.intelligence,
+      required this.strength,
+      required this.speed,
+      required this.durability,
+      required this.power,
+      required this.combat});
 
   factory Powerstats.fromJson(final Map<String, dynamic> json) =>
       _$PowerstatsFromJson(json);
