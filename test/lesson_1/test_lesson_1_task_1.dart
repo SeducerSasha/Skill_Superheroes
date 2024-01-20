@@ -1,8 +1,6 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:superheroes/main.dart';
 
 import '../shared/test_helpers.dart';
@@ -10,7 +8,7 @@ import '../shared/test_helpers.dart';
 void runTestLesson1Task1() {
   testWidgets('module1', (WidgetTester tester) async {
 
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(const MyApp());
 
     final materialAppFinder = find.byType(MaterialApp);
     expect(
@@ -28,7 +26,7 @@ void runTestLesson1Task1() {
     );
 
     expect(
-      materialApp.theme!.textTheme.bodyText1!.fontFamily,
+      materialApp.theme!.textTheme.bodyLarge!.fontFamily,
       equals("OpenSans_regular"),
       reason: "Text theme should be equals to GoogleFonts.openSansTextTheme()",
     );

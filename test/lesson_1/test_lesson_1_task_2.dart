@@ -7,7 +7,7 @@ import '../shared/test_helpers.dart';
 
 void runTestLesson1Task2() {
   testWidgets('module2', (WidgetTester tester) async {
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(const MyApp());
     await tester.pumpAndSettle();
 
     final actionButtonFinder =

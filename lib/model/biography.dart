@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:superheroes/model/alignment_info.dart';
 
 part 'biography.g.dart';
 
@@ -19,4 +21,6 @@ class Biography {
       _$BiographyFromJson(json);
 
   Map<String, dynamic> toJson() => _$BiographyToJson(this);
+
+  AlignmentInfo? get alignmentInfo => AlignmentInfo.fromAlignment(alignment);
 }

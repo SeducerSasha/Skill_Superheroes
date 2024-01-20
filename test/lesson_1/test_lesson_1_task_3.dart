@@ -9,7 +9,7 @@ import 'shared.dart';
 
 void runTestLesson1Task3() {
   testWidgets('module3', (WidgetTester tester) async {
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(const MyApp());
     await tester.pumpAndSettle();
 
     await reachNeededState(tester, MainPageState.minSymbols);

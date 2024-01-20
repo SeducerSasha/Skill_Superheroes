@@ -12,7 +12,7 @@ import 'shared.dart';
 void runTestLesson1Task5() {
   testWidgets('module5', (WidgetTester tester) async {
     mockNetworkImagesFor(() async {
-      await tester.pumpWidget(MyApp());
+      await tester.pumpWidget(const MyApp());
       await tester.pumpAndSettle();
 
       await reachNeededState(tester, MainPageState.favorites);
@@ -88,7 +88,7 @@ void runTestLesson1Task5() {
         "Bruce Wayne",
         reason: "SuperheroCard with Batman should have 'Bruce Wayne' as a realName parameter",
       );
-      final batmanUrl = "https://www.superherodb.com/pictures2/portraits/10/100/639.jpg";
+      const batmanUrl = "https://www.superherodb.com/pictures2/portraits/10/100/639.jpg";
       expect(
         batmanCard.imageUrl,
         batmanUrl,
@@ -138,7 +138,7 @@ void runTestLesson1Task5() {
         "Tony Stark",
         reason: "SuperheroCard with Batman should have 'Tony Stark' as a realName parameter",
       );
-      final ironmanUrl = "https://www.superherodb.com/pictures2/portraits/10/100/85.jpg";
+      const ironmanUrl = "https://www.superherodb.com/pictures2/portraits/10/100/85.jpg";
       expect(
         ironmanCard.imageUrl,
         ironmanUrl,

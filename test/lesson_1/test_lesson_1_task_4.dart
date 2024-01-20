@@ -10,7 +10,7 @@ import 'shared.dart';
 
 void runTestLesson1Task4() {
   testWidgets('module4', (WidgetTester tester) async {
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(const MyApp());
     await tester.pumpAndSettle();
 
     await reachNeededState(tester, MainPageState.noFavorites);
@@ -30,7 +30,7 @@ void runTestLesson1Task4() {
 
     final centerFinder = findTypeByChildTypeOnlyInParentType(Center, Column, Stack);
     final Iterable<Center> centerWidgets = tester.widgetList(centerFinder);
-    if (centerWidgets.length == 0) {
+    if (centerWidgets.isEmpty) {
       final alignFinder = findTypeByChildTypeOnlyInParentType(Align, Column, Stack);
       expect(
         alignFinder,
@@ -110,7 +110,7 @@ void runTestLesson1Task4() {
       image: image,
       width: 108,
       height: 119,
-      imageProvider: AssetImage("assets/images/ironman.png"),
+      imageProvider: const AssetImage("assets/images/ironman.png"),
     );
 
     final noFavoritesYetTextFinder = find.text("No favorites yet");
