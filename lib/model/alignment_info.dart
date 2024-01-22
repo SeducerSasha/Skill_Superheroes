@@ -30,7 +30,6 @@ class AlignmentInfo {
     // } else if (alignment == 'neutral') {
     //   return neutral;
     // }
-
-    return null;
+    //return null;
   }
 }

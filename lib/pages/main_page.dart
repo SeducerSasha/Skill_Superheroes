@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
@@ -283,7 +285,7 @@ class SuperHeroesList extends StatelessWidget {
             return const SizedBox.shrink();
           }
           final List<SuperheroInfo> superheroes = snapshot.data!;
-          print('GOT updated Superheroes: $superheroes');
+          log('GOT updated Superheroes: $superheroes');
           return ListView.separated(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             //physics: ClampingScrollPhysics(),
@@ -324,80 +326,65 @@ class ListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
 
-    if (!ableToSwipe) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: SuperheroCard(
-          superheroInfo: superhero,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => SuperheroPage(
-                  id: superhero.id,
-                ),
+    final card = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: SuperheroCard(
+        superheroInfo: superhero,
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => SuperheroPage(
+                id: superhero.id,
               ),
-            );
-          },
-        ),
-      );
-    }
+            ),
+          );
+        },
+      ),
+    );
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Dismissible(
-        key: ValueKey(superhero.id),
-        background: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: SuperHeroesColor.red,
-          ),
-          height: 70,
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: Text(
-              'Remove\nfrom\nfavorites'.toUpperCase(),
-              textAlign: TextAlign.left,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: SuperHeroesColor.whiteText,
-              ),
-            ),
-          ),
-        ),
-        secondaryBackground: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: SuperHeroesColor.red,
-          ),
-          height: 70,
-          alignment: Alignment.centerRight,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Text(
-              'Remove\nfrom\nfavorites'.toUpperCase(),
-              textAlign: TextAlign.right,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: SuperHeroesColor.whiteText,
-              ),
-            ),
-          ),
-        ),
-        onDismissed: (_) => bloc.removeFromFavorites(superhero.id),
-        child: SuperheroCard(
-          superheroInfo: superhero,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => SuperheroPage(
-                  id: superhero.id,
-                ),
-              ),
-            );
-          },
+      child: ableToSwipe
+          ? Dismissible(
+              key: ValueKey(superhero.id),
+              background: const BackgroundDismissibleWidget(isLeft: true),
+              secondaryBackground:
+                  const BackgroundDismissibleWidget(isLeft: false),
+              onDismissed: (_) => bloc.removeFromFavorites(superhero.id),
+              child: card,
+            )
+          : card,
+    );
+  }
+}
+
+class BackgroundDismissibleWidget extends StatelessWidget {
+  final bool isLeft;
+  // final Alignment alignment;
+  // final TextAlign textAlign;
+
+  const BackgroundDismissibleWidget({
+    super.key,
+    required this.isLeft,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: SuperHeroesColor.red,
+      ),
+      height: 70,
+      alignment: isLeft ? Alignment.centerLeft : Alignment.centerRight,
+      child: Text(
+        'Remove\nfrom\nfavorites'.toUpperCase(),
+        textAlign: isLeft ? TextAlign.left : TextAlign.right,
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          color: SuperHeroesColor.whiteText,
         ),
       ),
     );

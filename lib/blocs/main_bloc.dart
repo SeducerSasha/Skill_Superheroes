@@ -3,6 +3,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -137,10 +138,10 @@ class MainBloc {
         .removeFromFavorites(id)
         .asStream()
         .listen((event) {
-      print('Remove from favorites: $event');
+      log('Remove from favorites: $event');
     },
             onError: (error, stack) =>
-                print('Error happened in removeFromFavorites: $error, $stack'));
+                log('Error happened in removeFromFavorites: $error, $stack'));
   }
 
   void retry() {

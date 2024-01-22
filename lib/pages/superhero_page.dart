@@ -78,6 +78,7 @@ class SuperheroContentPage extends StatelessWidget {
                         powerstats: superhero.powerstats,
                       ),
                     BiographyWidget(biography: superhero.biography),
+                    const SizedBox(height: 4),
                   ],
                 ),
               ),
@@ -109,7 +110,7 @@ class SuperHeroAppBar extends StatelessWidget {
       ],
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
-          superhero.biography.fullName,
+          superhero.name,
           textAlign: TextAlign.center,
           style: const TextStyle(
               fontWeight: FontWeight.w800,
@@ -135,7 +136,7 @@ class SuperHeroAppBar extends StatelessWidget {
               color: SuperHeroesColor.background75,
               child: Center(
                 child: Image.asset(
-                  SuperHeroesImages.unknown,
+                  SuperHeroesImages.unknownBig,
                   width: 85,
                   height: 264,
                 ),
@@ -369,37 +370,68 @@ class BiographyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: SuperHeroesColor.background75,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Text(
-                  'Bio'.toUpperCase(),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: SuperHeroesColor.whiteText,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: SuperHeroesColor.background75,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Text(
+                    'Bio'.toUpperCase(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        color: SuperHeroesColor.whiteText,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700),
+                  ),
                 ),
-              ),
-              BiographiInfoWidget(name: 'Full name', value: biography.fullName),
-              BiographiInfoWidget(
-                  name: 'Aliases', value: biography.aliases.join(',')),
-              BiographiInfoWidget(
-                  name: 'Place-of-birth', value: biography.placeOfBirth),
-            ],
+                BiographiInfoWidget(
+                    name: 'Full name', value: biography.fullName),
+                BiographiInfoWidget(
+                    name: 'Aliases', value: biography.aliases.join(', ')),
+                BiographiInfoWidget(
+                    name: 'Place-of-birth', value: biography.placeOfBirth),
+              ],
+            ),
           ),
-        ),
+          biography.alignmentInfo == null
+              ? const SizedBox.shrink()
+              : Align(
+                  alignment: Alignment.topRight,
+                  child: RotatedBox(
+                    quarterTurns: 1,
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: 70,
+                      height: 24,
+                      decoration: BoxDecoration(
+                          color: biography.alignmentInfo?.color,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            bottomRight: Radius.circular(20),
+                          )),
+                      child: Text(
+                        biography.alignment.toUpperCase(),
+                        // textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: SuperHeroesColor.whiteText,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+        ],
       ),
     );
   }
@@ -427,6 +459,9 @@ class BiographiInfoWidget extends StatelessWidget {
               fontSize: 12,
               fontWeight: FontWeight.w600),
         ),
+        const SizedBox(
+          height: 4,
+        ),
         Text(
           value,
           textAlign: TextAlign.left,
@@ -435,7 +470,7 @@ class BiographiInfoWidget extends StatelessWidget {
               fontSize: 16,
               fontWeight: FontWeight.w400),
         ),
-        SizedBox(
+        const SizedBox(
           height: 20,
         ),
       ],

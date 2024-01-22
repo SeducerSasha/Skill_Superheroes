@@ -3,6 +3,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -60,7 +61,7 @@ class SuperheroBloc {
       requestSuperHero();
     },
             onError: (error, stack) =>
-                print('Error happened in removeFromFavorites: $error, $stack'));
+                log('Error happened in removeFromFavorites: $error, $stack'));
   }
 
   void addToFavorites() {
@@ -74,10 +75,10 @@ class SuperheroBloc {
         .addToFavorites(superhero)
         .asStream()
         .listen((event) {
-      print('Add to favorites: $event');
+      log('Add to favorites: $event');
     },
             onError: (error, stack) =>
-                print('Error happened in addToFavorites: $error, $stack'));
+                log('Error happened in addToFavorites: $error, $stack'));
   }
 
   void removeFromFavorites() {
@@ -91,10 +92,10 @@ class SuperheroBloc {
         .removeFromFavorites(id)
         .asStream()
         .listen((event) {
-      print('Remove from favorites: $event');
+      log('Remove from favorites: $event');
     },
             onError: (error, stack) =>
-                print('Error happened in removeFromFavorites: $error, $stack'));
+                log('Error happened in removeFromFavorites: $error, $stack'));
   }
 
   Stream<bool> observeIsFavorites() =>
@@ -106,7 +107,7 @@ class SuperheroBloc {
     requestSubscription = request().asStream().listen((superhero) {
       superHeroSubject.add(superhero);
     }, onError: (e, stack) {
-      print('Error happened in requestSuperHero: $e, $stack');
+      log('Error happened in requestSuperHero: $e, $stack');
     });
   }
 

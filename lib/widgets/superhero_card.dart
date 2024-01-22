@@ -64,7 +64,6 @@ class AlignmentWidget extends StatelessWidget {
         ),
       ),
     );
-    ;
   }
 }
 
@@ -107,7 +106,6 @@ class NameAndRealNameWidget extends StatelessWidget {
 
 class _AvatarWidget extends StatelessWidget {
   const _AvatarWidget({
-    super.key,
     required this.superheroInfo,
   });
 
