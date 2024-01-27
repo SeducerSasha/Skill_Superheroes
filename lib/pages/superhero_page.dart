@@ -1,4 +1,5 @@
-import 'dart:math';
+import 'dart:math' as math;
+import 'dart:developer' as developer;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:superheroes/model/superhero.dart';
 import 'package:superheroes/resources/superheroes_color.dart';
 import 'package:superheroes/resources/superheroes_icons.dart';
 import 'package:superheroes/resources/superheroes_images.dart';
+import 'package:superheroes/widgets/info_with_button.dart';
 
 class SuperheroPage extends StatefulWidget {
   final http.Client? client;
@@ -57,6 +59,95 @@ class SuperheroContentPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = Provider.of<SuperheroBloc>(context, listen: false);
 
+    return StreamBuilder<SuperheroPageState>(
+        stream: bloc.observeSuperHeroPageState(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData || snapshot.data == null) {
+            return const SizedBox.shrink();
+          }
+          final state = snapshot.data!;
+
+          switch (state) {
+            case SuperheroPageState.loaded:
+              return const SuperheroLoadedWidget();
+            case SuperheroPageState.loading:
+              return const SuperheroLoadingWidget();
+            default:
+              return const SuperheroErrorWidget();
+          }
+        });
+  }
+}
+
+class SuperheroLoadingWidget extends StatelessWidget {
+  const SuperheroLoadingWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        const SliverAppBar(
+          foregroundColor: SuperHeroesColor.whiteText,
+          backgroundColor: SuperHeroesColor.background,
+        ),
+        SliverToBoxAdapter(
+          child: Container(
+            margin: const EdgeInsets.only(top: 60),
+            alignment: Alignment.topCenter,
+            height: 44,
+            width: 44,
+            child: const CircularProgressIndicator(
+              color: SuperHeroesColor.blue,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class SuperheroErrorWidget extends StatelessWidget {
+  const SuperheroErrorWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = Provider.of<SuperheroBloc>(context, listen: false);
+    return CustomScrollView(
+      slivers: [
+        const SliverAppBar(
+          foregroundColor: SuperHeroesColor.whiteText,
+          backgroundColor: SuperHeroesColor.background,
+        ),
+        SliverToBoxAdapter(
+          child: Container(
+            margin: const EdgeInsets.only(top: 60),
+            child: InfoWithButton(
+              title: 'Error happened',
+              subtitle: 'Please, try again',
+              buttonText: 'Retry',
+              assetImage: SuperHeroesImages.superMan,
+              imageHeight: 106,
+              imageWidth: 126,
+              imageTopPadding: 22,
+              onTap: () => bloc.retry(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class SuperheroLoadedWidget extends StatelessWidget {
+  const SuperheroLoadedWidget({
+    super.key,
+  });
+
+  //final SuperheroBloc bloc;
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = Provider.of<SuperheroBloc>(context, listen: false);
     return StreamBuilder<Superhero>(
         stream: bloc.observeSuperHero(),
         builder: (context, snapshot) {
@@ -64,6 +155,7 @@ class SuperheroContentPage extends StatelessWidget {
             return const SizedBox.shrink();
           }
           final superhero = snapshot.data!;
+          developer.log('GOT new superhero: $superhero');
           return CustomScrollView(
             slivers: [
               SuperHeroAppBar(superhero: superhero),
@@ -350,7 +442,7 @@ class ArcCustomPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 6;
 
-    canvas.drawArc(rect, pi, pi * value, false, paint);
+    canvas.drawArc(rect, math.pi, math.pi * value, false, paint);
   }
 
   @override

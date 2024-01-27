@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:json_annotation/json_annotation.dart';
 
 part 'powerstats.g.dart';
@@ -45,4 +46,31 @@ class Powerstats {
       _$PowerstatsFromJson(json);
 
   Map<String, dynamic> toJson() => _$PowerstatsToJson(this);
+
+  @override
+  String toString() {
+    return 'Powerstats({intelligence : $intelligence, strength: $strength, speed :$speed, durability: $durability, power: $power, combat: $combat})';
+  }
+
+  @override
+  bool operator ==(covariant Powerstats other) {
+    if (identical(this, other)) return true;
+
+    return other.intelligence == intelligence &&
+        other.strength == strength &&
+        other.speed == speed &&
+        other.durability == durability &&
+        other.power == power &&
+        other.combat == combat;
+  }
+
+  @override
+  int get hashCode {
+    return intelligence.hashCode ^
+        strength.hashCode ^
+        speed.hashCode ^
+        durability.hashCode ^
+        power.hashCode ^
+        combat.hashCode;
+  }
 }
